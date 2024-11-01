@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cadvisor
+  namespace: oxn-external-monitoring
+  labels:
+    release: kube-prometheus  # Make sure this label matches the Prometheus release label
+spec:
+  selector:
+    matchLabels:
+      app: cadvisor
+  namespaceSelector:
+    matchNames:
+    - cadvisor
+  endpoints:
+  - port: http
+    interval: 30s
+    scrapeTimeout: 10s
+    path: /metrics
