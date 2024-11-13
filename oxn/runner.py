@@ -36,7 +36,8 @@ from .treatments import (
     KillTreatment,
     MetricsExportIntervalTreatment,
     ProbabilisticSamplingTreatment,
-    KubernetesProbabilisticHeadSamplingTreatment
+    KubernetesProbabilisticHeadSamplingTreatment,
+    KubernetesCorruptPacketTreatment,
 )
 from . import utils
 from .observer import Observer
@@ -80,6 +81,7 @@ class ExperimentRunner:
         "scale_deployment": DeploymentScaleTreatment,
         "security_context_kubernetes": KubernetesApplySecurityContextTreatment,
         "kubernetes_kill": KubernetesKillTreatment,
+        "kubernetes_corrupt": KubernetesCorruptPacketTreatment,
         
     }
 

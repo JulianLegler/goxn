@@ -16,9 +16,14 @@ from kubernetes.client.exceptions import ApiException
 from kubernetes.client.models.v1_deployment import V1Deployment
 from kubernetes.client.models.v1_pod import V1Pod
 
+import oxn
 from oxn.models.orchestrator import Orchestrator  # Import the abstract base class
+from oxn.steering.steering_controller import SteeringController
 
 from .errors import OxnException, OrchestratorException, OrchestratorResourceNotFoundException
+
+# Constants
+OXN_SIDECAR_CONTAINER_NAME = "oxn-steering-container"
 
 class KubernetesOrchestrator(Orchestrator):
     def __init__(self, experiment_config=None):
@@ -45,6 +50,8 @@ class KubernetesOrchestrator(Orchestrator):
         """Check if all of experiment_config.sue.required services are running"""
         self.required_services = self.experiment_config["experiment"]["sue"]["required"]
         #self._check_required_services(self.required_services)
+
+        self.steering_controller = SteeringController(kube_client=self.kube_client, api_client=self.api_client)
             
     
     def _check_required_services(self, required_services) -> bool:
@@ -711,7 +718,7 @@ class KubernetesOrchestrator(Orchestrator):
 
         otel_collector_config = yaml.safe_load(otel_collector_config_yaml)
 
-        otel_collector_config['processors']['probabilistic_sampler']['sampling_percentage'] = sampling_percentage
+        otel_collector_config['processors']['probabilistic_sampler']['sampling_percentage'] = float(sampling_percentage)
         otel_collector_config['processors']['probabilistic_sampler']['hash_seed'] = hash_seed
 
         updated_otel_collector_config_yaml = yaml.dump(otel_collector_config, default_flow_style=False)
@@ -771,4 +778,237 @@ class KubernetesOrchestrator(Orchestrator):
             
         logging.info(f"Deployment {deployment.metadata.name} is ready after restart")
             
+    def patch_deployment_to_include_steering_sidecar_container(self, deployment: V1Deployment):
+        """
+        Patch a deployment to include a sidecar container
+
+        Args:
+            deployment: The deployment to patch
+
+        """
+        assert deployment is not None
+        assert deployment.metadata is not None
+        assert deployment.metadata.name is not None
+        assert deployment.metadata.namespace is not None
+        assert deployment.spec is not None
+        assert deployment.spec.template is not None
+        assert deployment.spec.template.spec is not None
+        assert deployment.spec.template.spec.containers is not None
+
+        # check if sidecar container already exists
+        for container in deployment.spec.template.spec.containers:
+            if container.name == OXN_SIDECAR_CONTAINER_NAME:
+                logging.info(f"Sidecar container {OXN_SIDECAR_CONTAINER_NAME} already exists in deployment {deployment.metadata.name} in namespace {deployment.metadata.namespace}. Skipping patching")
+                return True
         
+        logging.info(f"Adding sidecar container {OXN_SIDECAR_CONTAINER_NAME} to deployment {deployment.metadata.name} in namespace {deployment.metadata.namespace}")
+
+        # Add the sidecar container
+        sidecar_container = client.V1Container(
+            name=OXN_SIDECAR_CONTAINER_NAME,
+            image=f"julianlegler/{OXN_SIDECAR_CONTAINER_NAME}:latest",
+            image_pull_policy="Always",
+            security_context=client.V1SecurityContext(
+                privileged=True,
+            ),
+        )
+        deployment.spec.template.spec.containers.append(sidecar_container)
+        
+        # Patch the deployment
+        response = self.api_client.patch_namespaced_deployment(
+            name=deployment.metadata.name,
+            namespace=deployment.metadata.namespace,
+            body=deployment,
+        )
+        
+        if not response:
+            raise ApiException(status=response.status_code, reason=response.reason)
+
+
+        time.sleep(4)
+        for i in range(0, 10):
+            if self.is_deployment_ready(deployment):
+                break
+            time.sleep(i * 2)
+            logging.info(f"Waiting for deployment {deployment.metadata.name} to be ready after restart. Retry {i}")
+
+        return True
+        
+    def set_network_delay(self, deployment:V1Deployment, interface, delay_time, jitter, correlation):
+        """
+        Set network delay for a deployment
+
+        Args:
+            deployment: The deployment to set the network delay for
+            interface: The network interface to set the delay for
+            delay_time: The delay time in ms
+            jitter: The jitter in ms
+            correlation: The correlation
+
+        """
+        assert deployment is not None
+        assert deployment.metadata is not None
+        assert deployment.metadata.name is not None
+        assert deployment.metadata.namespace is not None
+        assert deployment.spec is not None
+
+         # Extract the label selector from the deployment spec
+        label_selector = deployment.spec.selector.match_labels
+        label_selector_str = ','.join([f"{key}={value}" for key, value in label_selector.items()])
+
+      # List all pods with the label selector
+        pods = self.kube_client.list_namespaced_pod(
+            namespace=deployment.metadata.namespace, 
+            label_selector=label_selector_str)
+        assert pods is not None
+        assert pods.items is not None
+        assert pods.items.__len__() > 0
+
+        return self.steering_controller.set_network_delay(pods.items, interface, delay_time, jitter, correlation)
+        
+    def remove_network_delay(self, deployment:V1Deployment, interface):
+        """
+        Remove network delay for a deployment
+
+        Args:
+            deployment: The deployment to remove the network delay for
+            interface: The network interface to remove the delay for
+
+        """
+        assert deployment is not None
+        assert deployment.metadata is not None
+        assert deployment.metadata.name is not None
+        assert deployment.metadata.namespace is not None
+        assert deployment.spec is not None
+
+        # Extract the label selector from the deployment spec
+        label_selector = deployment.spec.selector.match_labels
+        label_selector_str = ','.join([f"{key}={value}" for key, value in label_selector.items()])
+
+        # List all pods with the label selector
+        pods = self.kube_client.list_namespaced_pod(
+            namespace=deployment.metadata.namespace, 
+            label_selector=label_selector_str)
+        assert pods is not None
+        assert pods.items is not None
+        assert pods.items.__len__() > 0
+
+        return self.steering_controller.remove_network_delay(pods.items, interface)
+    
+    def set_network_loss(self, deployment:V1Deployment, interface, loss):
+        """
+        Set network loss for a deployment
+
+        Args:
+            deployment: The deployment to set the network loss for
+            interface: The network interface to set the loss for
+            loss: The loss percentage
+
+        """
+        assert deployment is not None
+        assert deployment.metadata is not None
+        assert deployment.metadata.name is not None
+        assert deployment.metadata.namespace is not None
+        assert deployment.spec is not None
+
+        # Extract the label selector from the deployment spec
+        label_selector = deployment.spec.selector.match_labels
+        label_selector_str = ','.join([f"{key}={value}" for key, value in label_selector.items()])
+
+        # List all pods with the label selector
+        pods = self.kube_client.list_namespaced_pod(
+            namespace=deployment.metadata.namespace, 
+            label_selector=label_selector_str)
+        assert pods is not None
+        assert pods.items is not None
+        assert pods.items.__len__() > 0
+
+        return self.steering_controller.set_network_loss(pods.items, interface, loss)
+    
+    def remove_network_loss(self, deployment:V1Deployment, interface):
+        """
+        Remove network loss for a deployment
+
+        Args:
+            deployment: The deployment to remove the network loss for
+            interface: The network interface to remove the loss for
+
+        """
+        assert deployment is not None
+        assert deployment.metadata is not None
+        assert deployment.metadata.name is not None
+        assert deployment.metadata.namespace is not None
+        assert deployment.spec is not None
+
+        # Extract the label selector from the deployment spec
+        label_selector = deployment.spec.selector.match_labels
+        label_selector_str = ','.join([f"{key}={value}" for key, value in label_selector.items()])
+
+        # List all pods with the label selector
+        pods = self.kube_client.list_namespaced_pod(
+            namespace=deployment.metadata.namespace, 
+            label_selector=label_selector_str)
+        assert pods is not None
+        assert pods.items is not None
+        assert pods.items.__len__() > 0
+
+        return self.steering_controller.remove_network_loss(pods.items, interface)
+    
+    def set_network_corruption(self, deployment:V1Deployment, interface, percentage, correlation):
+        """
+        Set network corruption for a deployment
+
+        Args:
+            deployment: The deployment to set the network corruption for
+            interface: The network interface to set the corruption for
+            corruption: The corruption percentage
+
+        """
+        assert deployment is not None
+        assert deployment.metadata is not None
+        assert deployment.metadata.name is not None
+        assert deployment.metadata.namespace is not None
+        assert deployment.spec is not None
+
+        # Extract the label selector from the deployment spec
+        label_selector = deployment.spec.selector.match_labels
+        label_selector_str = ','.join([f"{key}={value}" for key, value in label_selector.items()])
+
+        # List all pods with the label selector
+        pods = self.kube_client.list_namespaced_pod(
+            namespace=deployment.metadata.namespace, 
+            label_selector=label_selector_str)
+        assert pods is not None
+        assert pods.items is not None
+        assert pods.items.__len__() > 0
+
+        return self.steering_controller.set_network_corruption(pods.items, interface, percentage, correlation)
+    
+    def remove_network_corruption(self, deployment:V1Deployment, interface):
+        """
+        Remove network corruption for a deployment
+
+        Args:
+            deployment: The deployment to remove the network corruption for
+            interface: The network interface to remove the corruption for
+
+        """
+        assert deployment is not None
+        assert deployment.metadata is not None
+        assert deployment.metadata.name is not None
+        assert deployment.metadata.namespace is not None
+        assert deployment.spec is not None
+
+        # Extract the label selector from the deployment spec
+        label_selector = deployment.spec.selector.match_labels
+        label_selector_str = ','.join([f"{key}={value}" for key, value in label_selector.items()])
+
+        # List all pods with the label selector
+        pods = self.kube_client.list_namespaced_pod(
+            namespace=deployment.metadata.namespace, 
+            label_selector=label_selector_str)
+        assert pods is not None
+        assert pods.items is not None
+        assert pods.items.__len__() > 0
+
+        return self.steering_controller.remove_network_corruption(pods.items, interface)
