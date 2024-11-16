@@ -58,86 +58,114 @@ experiment:
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_package_joules_all:
+    - pods_kepler_package_joules_all:
         type: metric
         metric_name: sum by (container_name, container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_dram_joules_all:
+    - pods_kepler_dram_joules_all:
         type: metric
         metric_name: sum by (container_name, container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_other_joules_all:
+    - pods_kepler_other_joules_all:
         type: metric
         metric_name: sum by (container_name, container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_package_joules_all_absolute:
+    - pods_kepler_joules_all:
+        type: metric
+        metric_name: sum by (container_name, container_namespace) (irate(kepler_container_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
+        left_window: 300s
+        right_window: 300s
+        step: 1
+        target: oxn
+    - pods_kepler_package_joules_all_absolute:
         type: metric
         metric_name: sum by (container_name, container_namespace) (kepler_container_package_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_dram_joules_all_absolute:
+    - pods_kepler_dram_joules_all_absolute:
         type: metric
         metric_name: sum by (container_name, container_namespace) (kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_other_joules_all_absolute:
+    - pods_kepler_other_joules_all_absolute:
         type: metric
         metric_name: sum by (container_name, container_namespace) (kepler_container_other_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_package_joules_namespace_combined:
+    - pods_kepler_joules_all_absolute:
+        type: metric
+        metric_name: sum by (container_name, container_namespace) (kepler_container_joules_total{container_namespace=~"system-under-evaluation"})
+        left_window: 300s
+        right_window: 300s
+        step: 1
+        target: oxn
+    - kepler_package_joules_namespace_combined:
         type: metric
         metric_name: sum by (container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_dram_joules_namespace_combined:
+    - kepler_dram_joules_namespace_combined:
         type: metric
         metric_name: sum by (container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_other_joules_namespace_combined:
+    - kepler_other_joules_namespace_combined:
         type: metric
         metric_name: sum by (container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_package_joules_namespace_combined_absolute:
+    - kepler_joules_namespace_combined:
+        type: metric
+        metric_name: sum by (container_namespace) (irate(kepler_container_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
+        left_window: 300s
+        right_window: 300s
+        step: 1
+        target: oxn
+    - kepler_package_joules_namespace_combined_absolute:
         type: metric
         metric_name: sum by (container_namespace) (kepler_container_package_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_dram_joules_namespace_combined_absolute:
+    - kepler_dram_joules_namespace_combined_absolute:
         type: metric
         metric_name: sum by (container_namespace) (kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
         step: 1
         target: oxn
-    - recommendationservice_kepler_other_joules_namespace_combined_absolute:
+    - kepler_other_joules_namespace_combined_absolute:
         type: metric
         metric_name: sum by (container_namespace) (kepler_container_other_joules_total{container_namespace=~"system-under-evaluation"})
+        left_window: 300s
+        right_window: 300s
+        step: 1
+        target: oxn
+    - kepler_joules_namespace_combined_absolute:
+        type: metric
+        metric_name: sum by (container_namespace) (kepler_container_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
         step: 1
@@ -170,6 +198,13 @@ experiment:
         right_window: 300s
         step: 1
         target: sue
+    - kepler_joules_total_namespace_combined:
+        type: metric
+        metric_name: sum by (container_namespace) (irate(kepler_container_joules_total{container_namespace="system-under-evaluation"}[1m]))
+        left_window: 300s
+        right_window: 300s
+        step: 1
+        target: oxn
     - kepler_metric_all_namespace:
         type: metric
         metric_name: sum by (pod_name, container_name, container_namespace, node)(irate(kepler_container_joules_total{container_namespace="system-under-evaluation"}[1m]))
