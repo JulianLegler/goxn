@@ -33,6 +33,10 @@ components:
     resources:
       limits:
         memory: 150Mi
+  frontendProxy:
+    resources:
+      limits:
+        memory: 250Mi
 
 opentelemetry-collector:
     config:
@@ -49,6 +53,9 @@ opentelemetry-collector:
             - transform
             - batch
             - probabilistic_sampler
+    resources:
+      limits:
+        memory: 2Gi
 prometheus:
   server:
     extraArgs:
