@@ -22,10 +22,22 @@
                 "GEVENT_SUPPORT": "True"
             },
             "args": [
-                "experiments/test.yml",
+                "experiments/recommendation_k8_base_1m_otel.yml",
                 "--report", "reports/"
             ],
             "console": "integratedTerminal",
+        },
+        {
+            "name": "evaluation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/evaluation.py",
+            "env": {
+                "GEVENT_SUPPORT": "True"
+            },
+            "args": [
+                "reports/report_2024-11-17_20-19-32.yaml",
+            ],
         }
     ],
 }
