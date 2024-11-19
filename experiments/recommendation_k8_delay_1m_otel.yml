@@ -28,259 +28,259 @@ experiment:
         metric_name: sum(rate(container_cpu_usage_seconds_total{namespace="system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - recommendation_deployment_CPU:
         type: metric
         metric_name: sum(rate(container_cpu_usage_seconds_total{namespace="system-under-evaluation", pod=~"astronomy-shop-recommendationservice.*"}[90s])) by (pod)
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - recommendationservice_kepler_package_joules:
         type: metric
         metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"astronomy-shop-recommendationservice.*"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - recommendationservice_kepler_dram_joules:
         type: metric
         metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"astronomy-shop-recommendationservice.*"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - recommendationservice_kepler_other_joules:
         type: metric
         metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"astronomy-shop-recommendationservice.*"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - pods_kepler_package_joules_all:
         type: metric
         metric_name: sum by (container_name, container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - pods_kepler_dram_joules_all:
         type: metric
         metric_name: sum by (container_name, container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - pods_kepler_other_joules_all:
         type: metric
         metric_name: sum by (container_name, container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - pods_kepler_joules_all:
         type: metric
         metric_name: sum by (container_name, container_namespace) (irate(kepler_container_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - pods_kepler_package_joules_all_absolute:
         type: metric
         metric_name: sum by (container_name, container_namespace) (kepler_container_package_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - pods_kepler_dram_joules_all_absolute:
         type: metric
         metric_name: sum by (container_name, container_namespace) (kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - pods_kepler_other_joules_all_absolute:
         type: metric
         metric_name: sum by (container_name, container_namespace) (kepler_container_other_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - pods_kepler_joules_all_absolute:
         type: metric
         metric_name: sum by (container_name, container_namespace) (kepler_container_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_package_joules_namespace_combined:
         type: metric
         metric_name: sum by (container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_dram_joules_namespace_combined:
         type: metric
         metric_name: sum by (container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_other_joules_namespace_combined:
         type: metric
         metric_name: sum by (container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_joules_namespace_combined:
         type: metric
         metric_name: sum by (container_namespace) (irate(kepler_container_joules_total{container_namespace=~"system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_package_joules_namespace_combined_absolute:
         type: metric
         metric_name: sum by (container_namespace) (kepler_container_package_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_dram_joules_namespace_combined_absolute:
         type: metric
         metric_name: sum by (container_namespace) (kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_other_joules_namespace_combined_absolute:
         type: metric
         metric_name: sum by (container_namespace) (kepler_container_other_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_joules_namespace_combined_absolute:
         type: metric
         metric_name: sum by (container_namespace) (kepler_container_joules_total{container_namespace=~"system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - latency_frontend_95_percentile:
         type: metric
         metric_name: histogram_quantile(0.95, sum(rate(duration_milliseconds_bucket{service_name="frontend"}[90s])) by (le))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: sue
     - latency_recommendationservice_95_percentile:
         type: metric
         metric_name: histogram_quantile(0.95, sum(rate(duration_milliseconds_bucket{service_name="recommendationservice"}[90s])) by (le))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: sue
     - recommendations_total:
         type: metric
         metric_name: increase(app_recommendations_counter_total[3m])
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: sue
     - sampling_rates:
         type: metric
         metric_name: increase(otelcol_processor_probabilistic_sampler_count_traces_sampled[1m])
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: sue
     - kepler_joules_total_namespace_combined:
         type: metric
         metric_name: sum by (container_namespace) (irate(kepler_container_joules_total{container_namespace="system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_metric_all_namespace:
         type: metric
         metric_name: sum by (pod_name, container_name, container_namespace, node)(irate(kepler_container_joules_total{container_namespace="system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - kepler_network_packages_received:
         type: metric
         metric_name: sum by (container_name) (rate(kepler_container_bpf_net_rx_irq_total{container_namespace="system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted:
         type: metric
         metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (rate(container_network_transmit_bytes_total{service="cadvisor", container_label_app_kubernetes_io_name="astronomy-shop-recommendationservice", container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_aboslute:
         type: metric
         metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (container_network_transmit_bytes_total{service="cadvisor", container_label_app_kubernetes_io_name="astronomy-shop-recommendationservice", container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_all:
         type: metric
         metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (rate(container_network_transmit_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[1m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_all_absolute:
         type: metric
         metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (container_network_transmit_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_combined_absolute:
         type: metric
         metric_name: sum by (container_label_io_kubernetes_pod_namespace) (container_network_transmit_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_storage_usage_all:
         type: metric
         metric_name: sum by (container_label_io_kubernetes_container_name) (rate(container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[3m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_storage_usage_combined:
         type: metric
         metric_name: sum by (container_label_io_kubernetes_pod_namespace) (rate(container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[3m]))
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_storage_usage_all_absolute:
         type: metric
         metric_name: sum by (container_label_io_kubernetes_container_name) (container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
     - cadvisor_storage_usage_combined_absolute:
         type: metric
         metric_name: sum by (container_label_io_kubernetes_pod_namespace) (container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
         left_window: 300s
         right_window: 300s
-        step: 1
+        step: 30
         target: oxn
   treatments:
     - delay_treatment:
