@@ -283,6 +283,12 @@ experiment:
         step: 30
         target: oxn
   treatments:
+    - probabilistic_head_sampling_rate:
+        action: kube_probl
+        params: {
+          sampling_percentage: 5.0,
+          hash_seed: 22,
+          }
     - empty_treatment:
         action: empty
         params: {

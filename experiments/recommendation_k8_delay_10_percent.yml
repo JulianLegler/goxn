@@ -283,10 +283,23 @@ experiment:
         step: 30
         target: oxn
   treatments:
-    - empty_treatment:
-        action: empty
+    - probabilistic_head_sampling_rate:
+        action: kube_probl
         params: {
+          sampling_percentage: 10.0,
+          hash_seed: 22,
+          }
+    - delay_treatment:
+        action: delay
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/name,
+          label: astronomy-shop-recommendationservice,
+          #service_name: node-exporter,
+          delay_time: 45ms,
+          delay_jitter: 45ms,
           duration: 5m,
+          interface: eth0,
         }
   sue:
     compose: opentelemetry-demo/docker-compose.yml
