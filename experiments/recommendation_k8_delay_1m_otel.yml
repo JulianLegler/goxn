@@ -16,13 +16,13 @@ experiment:
         service_name: frontend 
         left_window: 600s
         right_window: 600s
-        limit: 10000
+        limit: 30000
     - recommendation_traces:
         type: trace
         service_name: recommendationservice 
         left_window: 600s
         right_window: 600s
-        limit: 10000
+        limit: 30000
     - system_CPU:
         type: metric
         metric_name: sum(rate(container_cpu_usage_seconds_total{namespace="system-under-evaluation"}[1m]))
@@ -302,8 +302,8 @@ experiment:
     #required: [{namespace: monitoring, name: grafana}, {namespace: monitoring, name: node-exporter}]
   loadgen:
     run_time: 30m
-    max_users: 500
-    spawn_rate: 10
+    max_users: 1000
+    spawn_rate: 50
     locust_files: [
       { path: locust/locust_basic_interaction.py },
       { path: locust/locust_otel_demo.py },

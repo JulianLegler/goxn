@@ -22,22 +22,25 @@ components:
   flagd:
     resources:
       limits:
-        memory: 150Mi
+        memory: 1Gi
   productCatalogService:
     resources:
       limits:
-        memory: 150Mi
+        memory: 1Gi
   loadgenerator:
     enabled: false
   checkoutService:
     resources:
       limits:
-        memory: 150Mi
+        memory: 1Gi
   frontendProxy:
     resources:
       limits:
-        memory: 250Mi
-
+        memory: 1Gi
+  emailService:
+    resources:
+      limits:
+        memory: 1Gi
 opentelemetry-collector:
     config:
       processors:
@@ -55,7 +58,7 @@ opentelemetry-collector:
             - probabilistic_sampler
     resources:
       limits:
-        memory: 2Gi
+        memory: 8Gi
 prometheus:
   server:
     extraArgs:
@@ -65,10 +68,10 @@ prometheus:
       storageClass: "openebs-hostpath"
       accessModes:
         - ReadWriteOnce
-      size: 8Gi
+      size: 16Gi
     resources:
         limits:
-          memory: 1500Mi
+          memory: 6Gi
         
   #prometheus-node-exporter:
   #  enabled: true
