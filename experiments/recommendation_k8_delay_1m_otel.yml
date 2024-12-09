@@ -247,9 +247,23 @@ experiment:
         right_window: 600s
         step: 30
         target: oxn
+    - cadvisor_network_bytes_received_all_absolute:
+        type: metric
+        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (container_network_receive_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        left_window: 600s
+        right_window: 600s
+        step: 30
+        target: oxn
     - cadvisor_network_bytes_transmitted_combined_absolute:
         type: metric
         metric_name: sum by (container_label_io_kubernetes_pod_namespace) (container_network_transmit_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        left_window: 600s
+        right_window: 600s
+        step: 30
+        target: oxn
+    - cadvisor_network_bytes_received_combined_absolute:
+        type: metric
+        metric_name: sum by (container_label_io_kubernetes_pod_namespace) (container_network_receive_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
         left_window: 600s
         right_window: 600s
         step: 30

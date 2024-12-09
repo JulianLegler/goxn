@@ -349,17 +349,10 @@ experiment:
     #      duration: 10m,
     #      interface: eth0,
     #    }
-    - delay_treatment:
-        action: delay
+    - empty_treatment:
+        action: empty
         params: {
-          namespace: system-under-evaluation,
-          label_selector: app.kubernetes.io/name,
-          label: astronomy-shop-recommendationservice,
-          #service_name: node-exporter,
-          delay_time: 45ms,
-          delay_jitter: 45ms,
           duration: 5m,
-          interface: eth0,
         }
     - ensure_otel_metric_interval:
         action: kubernetes_otel_metrics_interval
