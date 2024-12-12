@@ -1,0 +1,63 @@
+experiment:
+  version: 0.0.1
+  orchestrator: kubernetes
+  services:
+    jaeger: 
+      name: astronomy-shop-jaeger-query
+      namespace: system-under-evaluation
+    prometheus: [
+      { name: astronomy-shop-prometheus-server, namespace: system-under-evaluation, target: sue },
+      { name: kube-prometheus-kube-prome-prometheus, namespace: oxn-external-monitoring, target: oxn },
+    ]
+  responses:
+    - pods_kepler_joules_all_absolute:
+        type: metric
+        metric_name: sum by (container_name, container_namespace) (kepler_container_joules_total{container_namespace=~"system-under-evaluation"})
+        left_window: 600s
+        right_window: 600s
+        step: 30
+        target: oxn
+    - cadvisor_network_bytes_transmitted_all_absolute:
+        type: metric
+        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (container_network_transmit_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        left_window: 600s
+        right_window: 600s
+        step: 30
+        target: oxn
+    - cadvisor_storage_usage_all_absolute:
+        type: metric
+        metric_name: sum by (container_label_io_kubernetes_container_name) (container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        left_window: 600s
+        right_window: 600s
+        step: 30
+        target: oxn
+  treatments:
+    - empty_treatment:
+        action: empty
+        params: {
+          duration: 5m,
+        }
+    - ensure_otel_metric_interval:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: recommendationservice,
+          interval: 1s,
+        }
+  sue:
+    compose: opentelemetry-demo/docker-compose.yml
+    exclude: [loadgenerator]
+    required: [{namespace: system-under-evaluation, name: astronomy-shop-prometheus-server}]
+  loadgen:
+    run_time: 30m
+    max_users: 1000
+    spawn_rate: 50
+    locust_files: [
+      { path: locust/locust_basic_interaction.py },
+      { path: locust/locust_otel_demo.py },
+      ]
+    target:
+      name: astronomy-shop-frontendproxy
+      namespace: system-under-evaluation
+      port: 8080
