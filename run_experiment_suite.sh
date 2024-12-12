@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 source venv/bin/activate
 
 cleanup() {
@@ -34,6 +34,11 @@ sleep 60
 
 cleanup
 setup
+python -m oxn experiments/recommendation_k8_base_1s_otel.yml --report reports/
+sleep 60
+
+cleanup
+setup
 python -m oxn experiments/recommendation_k8_delay_1s_otel.yml --report reports/
 sleep 60
 
@@ -57,3 +62,7 @@ setup
 python -m oxn experiments/recommendation_k8_delay_10_percent.yml --report reports/
 sleep 60
 
+cleanup
+setup
+python -m oxn experiments/recommendation_k8_base_50_percent.yml --report reports/
+sleep 60
