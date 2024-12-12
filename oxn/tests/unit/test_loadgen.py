@@ -4,7 +4,7 @@ import yaml
 from locust.shape import LoadTestShape
 from locust.user import User
 
-from oxn.loadgen import LoadGenerator
+from config_load_generator import ConfigLoadGenerator
 from oxn.tests.unit.spec_mocks import experiment_spec_mock
 
 
@@ -12,7 +12,7 @@ class LoadGenerationTest(unittest.TestCase):
     spec = yaml.safe_load(experiment_spec_mock)
 
     def setUp(self) -> None:
-        self.generator = LoadGenerator(config=self.spec)
+        self.generator = ConfigLoadGenerator(config=self.spec)
 
     def test_it_initializes(self):
         self.assertTrue(self.generator.env)
