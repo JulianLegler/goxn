@@ -31,7 +31,7 @@
             "name": "evaluation",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/evaluation.py",
+            "program": "${workspaceFolder}/evaluation/evaluation.py",
             "env": {
                 "GEVENT_SUPPORT": "True"
             },
