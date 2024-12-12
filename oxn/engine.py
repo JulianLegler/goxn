@@ -14,8 +14,8 @@ from .docker_orchestration import DockerComposeOrchestrator
 from .kubernetes_orchestrator import KubernetesOrchestrator
 from .report import Reporter
 from .store import write_dataframe
-from .loadgen import LoadGenerator
-from .locust_file_loadgenerator import LocustFileLoadgenerator
+from .config_load_generator import ConfigLoadGenerator
+from .file_load_generator import LocustFileLoadgenerator
 from .utils import utc_timestamp
 from .validation import syntactic_schema
 from .context import Context
