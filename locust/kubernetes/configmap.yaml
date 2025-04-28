@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts-cm
+  namespace: system-under-evaluation
+data:
+  locustfile.py: |
+{{ locustfile_content | indent(4, True) }}
