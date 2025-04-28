@@ -16,6 +16,7 @@ from .report import Reporter
 from .store import write_dataframe
 from .config_load_generator import ConfigLoadGenerator
 from .file_load_generator import LocustFileLoadgenerator
+from .locust_kubernetes import LocustKubernetesLoadgenerator
 from .utils import utc_timestamp
 from .validation import syntactic_schema
 from .context import Context
@@ -106,7 +107,7 @@ class Engine:
                     message="Unknown orchestrator",
                     explanation=f"Orchestrator {self.spec['experiment']['orchestrator']} is not supported",
                 )
-            self.generator = LocustFileLoadgenerator(orchestrator=self.orchestrator, config=self.spec)
+            self.generator = LocustKubernetesLoadgenerator(orchestrator=self.orchestrator, config=self.spec)
             names = []
             """ (
                 self.orchestrator.translate_compose_names(
@@ -179,9 +180,12 @@ class Engine:
                         run_key=self.runner.short_id
                     )
                     logger.debug("Assembled all interaction data")
-                    self.reporter.add_loadgen_data(
-                        runner=self.runner, request_stats=self.generator.env.stats
-                    )
+                    if self.generator.env is not None:
+                        self.reporter.add_loadgen_data(
+                            runner=self.runner, request_stats=self.generator.env.stats
+                        )
+                    else:
+                        self.reporter.add_loadgen_data_kubernetes_locust(self.generator, self.runner)
                     logger.debug("Added load generation data")
                     if accounting:
                         self.reporter.add_accountant_data(runner=self.runner)

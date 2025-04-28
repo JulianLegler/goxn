@@ -243,4 +243,3 @@ class DockerComposeOrchestrator(Orchestrator):
     
     def get_orchestrator_type(self) -> str:
         return "docker-compose"
-

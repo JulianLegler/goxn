@@ -208,6 +208,49 @@ class Reporter:
                 "median_response_time": entry.median_response_time,
             }
         return self.report_data
+    
+    def add_loadgen_data_kubernetes_locust(self, generator, runner):
+        stats = generator.stats
+        """Add load generation details to the report"""
+        self.report_data["report"]["runs"][runner.short_id]["loadgen"] = {}
+        self.report_data["report"]["runs"][runner.short_id]["loadgen"][
+            "loadgen_start_time"
+        ] = humanize_utc_timestamp(generator.loadgen_start_time)
+        self.report_data["report"]["runs"][runner.short_id]["loadgen"][
+            "loadgen_end_time"
+        ] = humanize_utc_timestamp(generator.loadgen_stop_time)
+
+        total_amount_requests = 0
+        total_amount_failures = 0
+        for endpoint_stats in stats["stats"]:
+            total_amount_requests += endpoint_stats["num_requests"]
+            total_amount_failures += endpoint_stats["num_failures"]
+        self.report_data["report"]["runs"][runner.short_id]["loadgen"][
+            "loadgen_total_requests"
+        ] = total_amount_requests
+        self.report_data["report"]["runs"][runner.short_id]["loadgen"][
+            "loadgen_total_failures"
+        ] = total_amount_failures
+        self.report_data["report"]["runs"][runner.short_id]["loadgen"][
+            "task_details"
+        ] = {}
+        for entry in stats["stats"]:
+            # get a random task identifier
+            task_id = uuid.uuid4().hex[:16]
+            self.report_data["report"]["runs"][runner.short_id]["loadgen"][
+                "task_details"
+            ][task_id] = {
+                "url": entry["name"],
+                "verb": entry["method"],
+                "requests": entry["num_requests"],
+                "failures": entry["num_failures"],
+                "fail_ratio": entry["num_failures"] / entry["num_requests"],
+                "min_response_time": entry["min_response_time"],
+                "max_response_time": entry["max_response_time"],
+                "avg_response_time": entry["avg_response_time"],
+                "median_response_time": entry["median_response_time"],
+            }
+        return self.report_data
 
     def add_accountant_data(self, runner: ExperimentRunner):
         """Add data from an accountant"""

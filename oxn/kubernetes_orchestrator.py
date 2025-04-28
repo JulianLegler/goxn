@@ -653,7 +653,7 @@ class KubernetesOrchestrator(Orchestrator):
 
         """
 
-        configmap_name = "astronomy-shop-otelcol"
+        configmap_name = "otelcol"
         
         try:
             configmap = self.kube_client.read_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation")
@@ -694,7 +694,7 @@ class KubernetesOrchestrator(Orchestrator):
 
        
         
-        configmap_name = "astronomy-shop-otelcol"
+        configmap_name = "otelcol"
         
         try:
             configmap = self.kube_client.read_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation")
@@ -719,7 +719,9 @@ class KubernetesOrchestrator(Orchestrator):
         otel_collector_config = yaml.safe_load(otel_collector_config_yaml)
 
         otel_collector_config['processors']['probabilistic_sampler']['sampling_percentage'] = float(sampling_percentage)
-        otel_collector_config['processors']['probabilistic_sampler']['hash_seed'] = hash_seed
+        #otel_collector_config['processors']['probabilistic_sampler']['hash_seed'] = hash_seed
+        otel_collector_config['processors']['probabilistic_sampler']['mode'] = "proportional"
+        #     mode: "proportional"
 
         updated_otel_collector_config_yaml = yaml.dump(otel_collector_config, default_flow_style=False)
 
@@ -1012,3 +1014,264 @@ class KubernetesOrchestrator(Orchestrator):
         assert pods.items.__len__() > 0
 
         return self.steering_controller.remove_network_corruption(pods.items, interface)
+    
+
+    def deploy_deployment_yaml(self, yaml_str: str):
+        """
+        Deploy a yaml file
+
+        Args:
+            yaml_str: The yaml file to deploy
+
+        """
+        assert yaml_str is not None
+        assert yaml_str != ""
+
+        # Load the yaml file
+        try: 
+            body = yaml.safe_load(yaml_str)
+        except yaml.YAMLError as e:
+            raise OrchestratorException(
+                message="Error while loading yaml file",
+                explanation=str(e),
+            )
+        assert body is not None
+
+        # Deploy the yaml file
+        try:
+            response = self.api_client.create_namespaced_deployment(
+                body=body,
+                namespace=body["metadata"]["namespace"],
+            )
+        except ApiException as e:
+            if "already exists" not in str(e):
+                raise OrchestratorException(
+                    message="Error while deploying deployment",
+                    explanation=str(e),
+                )
+            logging.warning(f"Deployment {body['metadata']['name']} already exists in namespace {body['metadata']['namespace']}. Trying to delete it and create it again.")
+            try:
+                self.api_client.delete_namespaced_deployment(
+                    name=body["metadata"]["name"],
+                    namespace=body["metadata"]["namespace"],
+                )
+                response = self.api_client.create_namespaced_deployment(
+                    body=body,
+                    namespace=body["metadata"]["namespace"],
+                )
+                logging.info(f"Deployment {body['metadata']['name']} in namespace {body['metadata']['namespace']} has been deleted and created again successfully")
+            except ApiException as e:
+                raise OrchestratorException(
+                    message="Error while deploying deployment",
+                    explanation=str(e),
+                )
+        
+        return response
+    
+    def deploy_configmap_yaml(self, yaml_str: str):
+        """
+        Deploy a yaml file
+
+        Args:
+            yaml_str: The yaml file to deploy
+
+        """
+        assert yaml_str is not None
+        assert yaml_str != ""
+
+        # Load the yaml file
+        try: 
+            body = yaml.safe_load(yaml_str)
+        except yaml.YAMLError as e:
+            raise OrchestratorException(
+                message="Error while loading yaml file",
+                explanation=str(e),
+            )
+        assert body is not None
+
+        try: 
+        # Deploy the yaml file
+            response = self.kube_client.create_namespaced_config_map(
+                body=body,
+                namespace=body["metadata"]["namespace"],
+            )
+        except ApiException as e:
+            if "already exists" not in str(e):
+                raise OrchestratorException(
+                    message="Error while deploying configmap",
+                    explanation=str(e),
+                )
+            logging.warning(f"ConfigMap {body['metadata']['name']} already exists in namespace {body['metadata']['namespace']}. Trying to delete it and create it again.")
+            try:
+                self.kube_client.delete_namespaced_config_map(
+                    name=body["metadata"]["name"],
+                    namespace=body["metadata"]["namespace"],
+                )
+                response = self.kube_client.create_namespaced_config_map(
+                    body=body,
+                    namespace=body["metadata"]["namespace"],
+                )
+                logging.info(f"ConfigMap {body['metadata']['name']} in namespace {body['metadata']['namespace']} has been deleted and created again successfully")
+            except ApiException as e:
+                raise OrchestratorException(
+                    message="Error while deploying configmap",
+                    explanation=str(e),
+                )
+        return response
+    
+    def deploy_service_yaml(self, yaml_str: str):
+        """
+        Deploy a yaml file
+
+        Args:
+            yaml_str: The yaml file to deploy
+
+        """
+        assert yaml_str is not None
+        assert yaml_str != ""
+
+        # Load the yaml file
+        try: 
+            body = yaml.safe_load(yaml_str)
+        except yaml.YAMLError as e:
+            raise OrchestratorException(
+                message="Error while loading yaml file",
+                explanation=str(e),
+            )
+        assert body is not None
+
+        # Deploy the yaml file
+        try:
+            response = self.kube_client.create_namespaced_service(
+                body=body,
+                namespace=body["metadata"]["namespace"],
+            )
+        except ApiException as e:
+            if "already exists" not in str(e):
+                raise OrchestratorException(
+                    message="Error while deploying service",
+                    explanation=str(e),
+                )
+            logging.warning(f"Service {body['metadata']['name']} already exists in namespace {body['metadata']['namespace']}. Trying to delete it and create it again.")
+            try:
+                self.kube_client.delete_namespaced_service(
+                    name=body["metadata"]["name"],
+                    namespace=body["metadata"]["namespace"],
+                )
+                response = self.kube_client.create_namespaced_service(
+                    body=body,
+                    namespace=body["metadata"]["namespace"],
+                )
+                logging.info(f"Service {body['metadata']['name']} in namespace {body['metadata']['namespace']} has been deleted and created again successfully")
+            except ApiException as e:
+                raise OrchestratorException(
+                    message="Error while deploying service",
+                    explanation=str(e),
+                )
+        
+        return response
+    
+    def delete_deployment_yaml(self, yaml_str: str):
+        """
+        Delete a yaml file
+
+        Args:
+            yaml_str: The yaml file to delete
+
+        """
+        assert yaml_str is not None
+        assert yaml_str != ""
+
+        # Load the yaml file
+        try: 
+            body = yaml.safe_load(yaml_str)
+        except yaml.YAMLError as e:
+            raise OrchestratorException(
+                message="Error while loading yaml file",
+                explanation=str(e),
+            )
+        assert body is not None
+
+        # Delete the yaml file
+        try:
+            response = self.api_client.delete_namespaced_deployment(
+                name=body["metadata"]["name"],
+                namespace=body["metadata"]["namespace"],
+            )
+        except ApiException as e:
+            raise OrchestratorException(
+                message="Error while deleting deployment",
+                explanation=str(e),
+            )
+        
+        return response
+    
+    def delete_configmap_yaml(self, yaml_str: str):
+        """
+        Delete a yaml file
+
+        Args:
+            yaml_str: The yaml file to delete
+
+        """
+        assert yaml_str is not None
+        assert yaml_str != ""
+
+        # Load the yaml file
+        try: 
+            body = yaml.safe_load(yaml_str)
+        except yaml.YAMLError as e:
+            raise OrchestratorException(
+                message="Error while loading yaml file",
+                explanation=str(e),
+            )
+        assert body is not None
+
+        # Delete the yaml file
+        try:
+            response = self.kube_client.delete_namespaced_config_map(
+                name=body["metadata"]["name"],
+                namespace=body["metadata"]["namespace"],
+            )
+        except ApiException as e:
+            raise OrchestratorException(
+                message="Error while deleting configmap",
+                explanation=str(e),
+            )
+        
+        return response
+    
+    def delete_service_yaml(self, yaml_str: str):
+        """
+        Delete a yaml file
+
+        Args:
+            yaml_str: The yaml file to delete
+
+        """
+        assert yaml_str is not None
+        assert yaml_str != ""
+
+        # Load the yaml file
+        try: 
+            body = yaml.safe_load(yaml_str)
+        except yaml.YAMLError as e:
+            raise OrchestratorException(
+                message="Error while loading yaml file",
+                explanation=str(e),
+            )
+        assert body is not None
+
+        # Delete the yaml file
+        try:
+            response = self.kube_client.delete_namespaced_service(
+                name=body["metadata"]["name"],
+                namespace=body["metadata"]["namespace"],
+            )
+        except ApiException as e:
+            raise OrchestratorException(
+                message="Error while deleting service",
+                explanation=str(e),
+            )
+        
+        return response

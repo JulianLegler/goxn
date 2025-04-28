@@ -809,13 +809,15 @@ class KubernetesMetricsExportIntervalTreatment(Treatment):
             return
         assert isinstance(self.orchestrator, KubernetesOrchestrator)
         # update the deployment as otherwise there will be an error because the deployment is outdated
+        """ 
+        TODO: uncomment this code before commit!
         self.deployment = self.orchestrator.get_deployment(self.namespace, self.label_selector, self.label)
         result = self.orchestrator.set_deployment_env_parameter(
             deployment=self.deployment,
             environment_variable_name=self.env_name,
             environment_variable_value=self.init_env_value,
         )
-        logging.info(f"Environment variable '{self.env_name} reset for deployment '{self.deployment.metadata.name}' to initial value.")
+        logging.info(f"Environment variable '{self.env_name} reset for deployment '{self.deployment.metadata.name}' to initial value.") """
 
     def params(self) -> dict:
         return {
@@ -952,7 +954,7 @@ class KubernetesProbabilisticHeadSamplingTreatment(Treatment):
     def preconditions(self) -> bool:
         """Check that the config exists at the specified location and that Prometheus is running"""
         assert isinstance(self.orchestrator, KubernetesOrchestrator)
-        configmap_name = "astronomy-shop-otelcol"
+        configmap_name = "otelcol"
         
         try:
             configmap = self.orchestrator.kube_client.read_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation")
@@ -962,7 +964,7 @@ class KubernetesProbabilisticHeadSamplingTreatment(Treatment):
                 explanation=str(e),
             )
 
-        self.deployment = self.orchestrator.get_deployment("system-under-evaluation", "app.kubernetes.io/name", "otelcol")
+        self.deployment = self.orchestrator.get_deployment("system-under-evaluation", "app.kubernetes.io/name", "opentelemetry-collector")
 
         if not configmap:
             self.messages.append(f"ConfigMap {configmap_name} not found in namespace system-under-evaluation")
@@ -980,7 +982,7 @@ class KubernetesProbabilisticHeadSamplingTreatment(Treatment):
         assert self.config.get("hash_seed")
         assert isinstance(self.orchestrator, KubernetesOrchestrator)
         
-        self.deployment = self.orchestrator.get_deployment("system-under-evaluation", "app.kubernetes.io/name", "otelcol")
+        self.deployment = self.orchestrator.get_deployment("system-under-evaluation", "app.kubernetes.io/name", "opentelemetry-collector")
         
         self.initial_sampling_percentage, self.initial_hash_seed = self.orchestrator.get_otel_collector_probabilistic_sampling_values()
         self.orchestrator.set_otel_collector_probabilistic_sampling_values(sampling_percentage=self.config.get("sampling_percentage"), hash_seed=self.config.get("hash_seed"))
@@ -996,11 +998,11 @@ class KubernetesProbabilisticHeadSamplingTreatment(Treatment):
         assert self.initial_hash_seed
         assert isinstance(self.orchestrator, KubernetesOrchestrator)
 
-        self.orchestrator.set_otel_collector_probabilistic_sampling_values(sampling_percentage=self.initial_sampling_percentage, hash_seed=self.initial_hash_seed)
+        """  self.orchestrator.set_otel_collector_probabilistic_sampling_values(sampling_percentage=self.initial_sampling_percentage, hash_seed=self.initial_hash_seed)
         logging.info(f"Reset otel collectors probabilistic sampling rate  {self.config.get('sampling_percentage')} -> {self.initial_sampling_percentage} and hash seed to {self.config.get('hash_seed')} -> {self.initial_hash_seed}")
 
          # TODO: it seams as there might be a way to reload config maps without restarting the pods in some cases. This should be investigated (https://kubernetes.io/docs/concepts/configuration/configmap/#mounted-configmaps-are-updated-automatically)
-        self.orchestrator.restart_pods_of_deployment(self.deployment)
+        self.orchestrator.restart_pods_of_deployment(self.deployment) """
 
         return
         
