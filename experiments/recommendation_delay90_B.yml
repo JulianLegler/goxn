@@ -9,7 +9,7 @@ experiment:
         limit: 100000
     - recommendation_traces:
         type: trace
-        service_name: recommendationservice 
+        service_name: recommendation 
         left_window: 240s 
         right_window: 240s 
         limit: 100000

@@ -20,7 +20,7 @@ components:
     resources:
       limits:
         memory: 1Gi
-  frontendProxy:
+  frontend-proxy:
     resources:
       limits:
         memory: 1Gi

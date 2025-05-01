@@ -4,93 +4,100 @@ experiment:
   orchestrator: kubernetes
   services:
     jaeger: 
-      name: astronomy-shop-jaeger-query
+      name: jaeger-query
       namespace: system-under-evaluation
     prometheus: [
-      { name: astronomy-shop-prometheus-server, namespace: system-under-evaluation, target: sue },
+      { name: prometheus, namespace: system-under-evaluation, target: sue },
       { name: kube-prometheus-kube-prome-prometheus, namespace: oxn-external-monitoring, target: oxn },
     ]
   responses:
     - frontend_traces:
         type: trace
         service_name: frontend 
-        left_window: 300s
-        right_window: 300s
+        left_window: 30s
+        right_window: 30s
         limit: 10000
     - recommendation_traces:
         type: trace
-        service_name: recommendationservice 
-        left_window: 300s
-        right_window: 300s
+        service_name: recommendation 
+        left_window: 30s
+        right_window: 30s
         limit: 10000
     - system_CPU:
         type: metric
         metric_name: sum(rate(container_cpu_usage_seconds_total{namespace="system-under-evaluation"}[1m]))
-        left_window: 300s
-        right_window: 300s
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: oxn
     - recommendation_deployment_CPU:
         type: metric
-        metric_name: sum(rate(container_cpu_usage_seconds_total{namespace="system-under-evaluation", pod=~"astronomy-shop-recommendationservice.*"}[90s])) by (pod)
-        left_window: 300s
-        right_window: 300s
+        metric_name: sum(rate(container_cpu_usage_seconds_total{namespace="system-under-evaluation", pod=~"recommendation.*"}[90s])) by (pod)
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: oxn
-    - recommendationservice_kepler_package_joules:
+    - recommendation_kepler_package_joules:
         type: metric
-        metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"astronomy-shop-recommendationservice.*"}[1m]))
-        left_window: 300s
-        right_window: 300s
+        metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_package_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"recommendation.*"}[1m]))
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: oxn
-    - recommendationservice_kepler_dram_joules:
+    - recommendation_kepler_dram_joules:
         type: metric
-        metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"astronomy-shop-recommendationservice.*"}[1m]))
-        left_window: 300s
-        right_window: 300s
+        metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_dram_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"recommendation.*"}[1m]))
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: oxn
-    - recommendationservice_kepler_other_joules:
+    - recommendation_kepler_other_joules:
         type: metric
-        metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"astronomy-shop-recommendationservice.*"}[1m]))
-        left_window: 300s
-        right_window: 300s
+        metric_name: sum by (pod_name, container_namespace) (irate(kepler_container_other_joules_total{container_namespace=~"system-under-evaluation", pod_name=~"recommendation.*"}[1m]))
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: oxn
     - latency_frontend_95_percentile:
         type: metric
-        metric_name: histogram_quantile(0.95, sum(rate(duration_milliseconds_bucket{service_name="frontend"}[90s])) by (le))
-        left_window: 300s
-        right_window: 300s
-        step: 1
-        target: sue
-    - latency_recommendationservice_95_percentile:
-        type: metric
-        metric_name: histogram_quantile(0.95, sum(rate(duration_milliseconds_bucket{service_name="recommendationservice"}[90s])) by (le))
-        left_window: 300s
-        right_window: 300s
+        metric_name: histogram_quantile(0.95, sum(rate(http_client_duration_milliseconds_bucket{job="opentelemetry-demo/frontend"}[90s])) by (le))
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: sue
     - recommendations_total:
         type: metric
-        metric_name: increase(app_recommendations_counter_total[1m])
-        left_window: 300s
-        right_window: 300s
+        metric_name: increase(app_recommendations_counter_total[2m])
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: sue
     - sampling_rates:
         type: metric
         metric_name: increase(otelcol_processor_probabilistic_sampler_count_traces_sampled[1m])
-        left_window: 300s
-        right_window: 300s
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: sue
     - kepler_metric_all_namespace:
         type: metric
         metric_name: sum by (pod_name, container_name, container_namespace, node)(irate(kepler_container_joules_total{container_namespace="system-under-evaluation"}[1m]))
-        left_window: 300s
-        right_window: 300s
+        left_window: 30s
+        right_window: 30s
+        step: 1
+        target: oxn
+    - kepler_network_packages_received:
+        type: metric
+        metric_name: sum by (container_name) (rate(kepler_container_bpf_net_rx_irq_total{container_namespace="system-under-evaluation"}[1m]))
+        left_window: 30s
+        right_window: 30s
+        step: 1
+        target: oxn
+    - cadvisor_network_bytes_transmitted:
+        type: metric
+        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (rate(container_network_transmit_bytes_total{service="cadvisor", container_label_app_kubernetes_io_name="recommendation", container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[1m]))
+        left_window: 30s
+        right_window: 30s
         step: 1
         target: oxn
   treatments:
@@ -99,7 +106,7 @@ experiment:
     #    params: {
     #      namespace: system-under-evaluation,
     #      label_selector: app.kubernetes.io/component,
-    #      label: recommendationservice,
+    #      label: recommendation,
     #      amount_to_kill: 1,
     #    }
     #- stop_loadgen_deployment:
@@ -115,21 +122,21 @@ experiment:
     #    params: {
     #      namespace: system-under-evaluation,
     #      label_selector: app.kubernetes.io/component,
-    #      label: recommendationservice,
+    #      label: recommendation,
     #      capabilities: { add: ["NET_ADMIN"] },
     #    }
-    # - delay_treatment:
-    #     action: delay
-    #     params: {
-    #       namespace: system-under-evaluation,
-    #       label_selector: app.kubernetes.io/name,
-    #       label: astronomy-shop-recommendationservice,
-    #       #service_name: node-exporter,
-    #       delay_time: 45ms,
-    #       delay_jitter: 45ms,
-    #       duration: 10m,
-    #       interface: eth0,
-    #     }
+    - delay_treatment:
+        action: delay
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/name,
+          label: recommendation,
+          #service_name: node-exporter,
+          delay_time: 45ms,
+          delay_jitter: 45ms,
+          duration: 20m,
+          interface: eth0,
+        }
     # - probabilistic_head_sampling_rate:
     #     action: kube_probl
     #     params: {
@@ -141,22 +148,22 @@ experiment:
     #    params: {
     #      namespace: system-under-evaluation,
     #      label_selector: app.kubernetes.io/name,
-    #      label: astronomy-shop-recommendationservice,
+    #      label: recommendation,
     #      loss_percentage: 15.0,
     #      duration: 10m,
     #      interface: eth0,
     #    }
-    - empty_treatment:
-        action: empty
-        params: {
-          duration: 20m,
-        }
+    # - empty_treatment:
+    #     action: empty
+    #     params: {
+    #       duration: 20m,
+    #     }
     #- increase_otel_metric_interval:
     #    action: kubernetes_otel_metrics_interval
     #    params: {
     #      namespace: system-under-evaluation,
     #      label_selector: app.kubernetes.io/component,
-    #      label: recommendationservice,
+    #      label: recommendation,
     #      interval: 15s,
     #    }
      #reloading the prometheus config is not as trivial as it seems to be
@@ -170,10 +177,10 @@ experiment:
   sue:
     compose: opentelemetry-demo/docker-compose.yml
     exclude: [loadgenerator]
-    required: [{namespace: system-under-evaluation, name: astronomy-shop-prometheus-server}] # {namespace: monitoring, name: not-running-service}
+    required: [{namespace: system-under-evaluation, name: prometheus}] # {namespace: monitoring, name: not-running-service}
     #required: [{namespace: monitoring, name: grafana}, {namespace: monitoring, name: node-exporter}]
   loadgen:
-    run_time: 30m
+    run_time: 6m
     max_users: 500
     spawn_rate: 10
     locust_files: [
@@ -181,6 +188,6 @@ experiment:
       { path: locust/locust_otel_demo.py },
       ]
     target:
-      name: astronomy-shop-frontendproxy
+      name: frontend-proxy
       namespace: system-under-evaluation
       port: 8080

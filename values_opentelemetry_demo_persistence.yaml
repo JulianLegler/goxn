@@ -1,0 +1,101 @@
+jaeger:
+  allInOne:
+    enabled: false
+  provisionDataStore:
+    cassandra: false
+    elasticsearch: true
+  storage:
+    type: elasticsearch
+  collector:
+    enabled: true
+    service:
+      grpc:
+        port: 14250
+      http:
+        port: 14268
+
+      # --- NEW: OTLP receiver ports ---
+      otlp:
+        grpc:               # ← presence of this map enables everything
+          name: otlp-grpc   # servicePort name (default is fine)
+          port: 4317        # exposed on the Service and in the Pod
+        http:
+          name: otlp-http
+          port: 4318        
+  query:
+    enabled: true
+    service:
+      type: ClusterIP       # change to NodePort / LoadBalancer / etc. if you prefer
+      port: 16686           # servicePort
+      targetPort: query     # matches the containerPort named "query"
+      # nodePort: 31686     # only if type == NodePort and you want a fixed port
+
+    
+  elasticsearch:
+    master:
+      persistence:
+        enabled: true
+        storageClass: openebs-hostpath  
+        size: 10Gi
+    data:
+      persistence:
+        enabled: true
+        storageClass: openebs-hostpath   
+        size: 20Gi
+components:
+  flagd:
+    resources:
+      limits:
+        memory: 1Gi
+  product-catalog:
+    resources:
+      limits:
+        memory: 1Gi
+  load-generator:
+    enabled: false
+  checkout:
+    resources:
+      limits:
+        memory: 1Gi
+  frontend-proxy:
+    resources:
+      limits:
+        memory: 1Gi
+  email:
+    resources:
+      limits:
+        memory: 1Gi
+opentelemetry-collector:
+  config:
+    processors:
+      probabilistic_sampler:
+        sampling_percentage: 1
+        hash_seed: 22
+    service:
+      pipelines:
+        traces:
+          processors:
+            - memory_limiter
+            - resource
+            - transform
+            - batch
+            - probabilistic_sampler
+  resources:
+    limits:
+      memory: 18Gi
+prometheus:
+  server:
+    extraArgs:
+      web.enable-lifecycle: ""
+    persistentVolume:
+      enabled: true
+      storageClass: "openebs-hostpath"
+      accessModes:
+        - ReadWriteOnce
+      size: 16Gi
+    resources:
+      limits:
+        memory: 6Gi
+#opensearch:
+#  persistence:
+#    enabled: true

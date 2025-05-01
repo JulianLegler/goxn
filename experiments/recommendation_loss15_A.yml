@@ -20,7 +20,7 @@ experiment:
         action: otel_metrics_interval
         params: {
           compose_file: opentelemetry-demo/docker-compose.yml,
-          service_name: recommendationservice,
+          service_name: recommendation,
           interval: 1s
         }
   sue:

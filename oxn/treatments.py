@@ -954,7 +954,7 @@ class KubernetesProbabilisticHeadSamplingTreatment(Treatment):
     def preconditions(self) -> bool:
         """Check that the config exists at the specified location and that Prometheus is running"""
         assert isinstance(self.orchestrator, KubernetesOrchestrator)
-        configmap_name = "otelcol"
+        configmap_name = "otel-collector"
         
         try:
             configmap = self.orchestrator.kube_client.read_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation")

@@ -179,6 +179,7 @@ class MetricResponseVariable(ResponseVariable):
         self.data = self._range_query_to_df(
             prometheus_metrics, metric_column_name=self.metric_name
         )
+        assert self.data is not None, "Prometheus dataframe is empty"
         return self.data
 
 
@@ -337,5 +338,6 @@ class TraceResponseVariable(ResponseVariable):
         )
 
         trace_df = self._tabulate(trace_json=traces)
+        assert trace_df is not None, "Trace dataframe is empty"
         self.data = trace_df
         return trace_df

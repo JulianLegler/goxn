@@ -653,7 +653,7 @@ class KubernetesOrchestrator(Orchestrator):
 
         """
 
-        configmap_name = "otelcol"
+        configmap_name = "otel-collector"
         
         try:
             configmap = self.kube_client.read_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation")
@@ -694,7 +694,7 @@ class KubernetesOrchestrator(Orchestrator):
 
        
         
-        configmap_name = "otelcol"
+        configmap_name = "otel-collector"
         
         try:
             configmap = self.kube_client.read_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation")
