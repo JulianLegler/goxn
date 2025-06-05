@@ -10,13 +10,13 @@ components:
     resources:
       limits:
         memory: 1Gi
-  productCatalogService:
+  product-catalog:
     resources:
       limits:
         memory: 1Gi
-  loadgenerator:
+  load-generator:
     enabled: false
-  checkoutService:
+  checkout:
     resources:
       limits:
         memory: 1Gi
@@ -24,7 +24,7 @@ components:
     resources:
       limits:
         memory: 1Gi
-  emailService:
+  email:
     resources:
       limits:
         memory: 1Gi
