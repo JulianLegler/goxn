@@ -110,10 +110,10 @@ The following commands add the helm repository and install the kube-prometheus-s
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
-helm install kube-prometheus prometheus-community/kube-prometheus-stack 
-    --namespace oxn-external-monitoring 
-    --create-namespace 
-    --version 62.5.1 
+helm install kube-prometheus prometheus-community/kube-prometheus-stack \
+    --namespace oxn-external-monitoring \
+    --create-namespace \
+    --version 62.5.1 \
     -f values_kube_prometheus.yaml
 ```
 
