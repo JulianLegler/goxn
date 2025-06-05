@@ -149,9 +149,10 @@ Deployment of the SUE follows also the instructions from the [official documenta
 ```bash
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm repo update
-helm install astronomy-shop open-telemetry/opentelemetry-demo 
-    --namespace system-under-evaluation 
-    --create-namespace
-    -f values_opentelemetry_demo.yaml 
+helm install astronomy-shop open-telemetry/opentelemetry-demo \
+    --namespace system-under-evaluation \
+    --create-namespace \
+    --version 0.36.4 \
+    -f values_opentelemetry_demo.yaml
 ```
 
