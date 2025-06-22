@@ -202,84 +202,84 @@ experiment:
         target: oxn
     - cadvisor_network_bytes_transmitted:
         type: metric
-        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (rate(container_network_transmit_bytes_total{service="cadvisor", container_label_app_kubernetes_io_name="recommendation", container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[90s]))
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_transmit_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{label_app_kubernetes_io_name="recommendation", namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_aboslute:
         type: metric
-        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (container_network_transmit_bytes_total{service="cadvisor", container_label_app_kubernetes_io_name="recommendation", container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{label_app_kubernetes_io_name="recommendation", namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_all:
         type: metric
-        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (rate(container_network_transmit_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[90s]))
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_transmit_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_network_bytes_received_all:
         type: metric
-        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (rate(container_network_receive_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[90s]))
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_receive_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_all_absolute:
         type: metric
-        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (container_network_transmit_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_network_bytes_received_all_absolute:
         type: metric
-        metric_name: sum by (container_label_app_kubernetes_io_name, container_label_io_kubernetes_pod_name, container_label_io_kubernetes_pod_namespace) (container_network_receive_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_receive_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_combined_absolute:
         type: metric
-        metric_name: sum by (container_label_io_kubernetes_pod_namespace) (container_network_transmit_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(container_network_transmit_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_network_bytes_received_combined_absolute:
         type: metric
-        metric_name: sum by (container_label_io_kubernetes_pod_namespace) (container_network_receive_bytes_total{service="cadvisor",  container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(container_network_receive_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_storage_usage_all:
         type: metric
-        metric_name: sum by (container_label_io_kubernetes_container_name) (rate(container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[3m]))
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_blkio_device_usage_total[3m])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_storage_usage_combined:
         type: metric
-        metric_name: sum by (container_label_io_kubernetes_pod_namespace) (rate(container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"}[3m]))
+        metric_name: sum by (namespace)(rate(container_blkio_device_usage_total[3m])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_storage_usage_all_absolute:
         type: metric
-        metric_name: sum by (container_label_io_kubernetes_container_name) (container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_blkio_device_usage_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
         target: oxn
     - cadvisor_storage_usage_combined_absolute:
         type: metric
-        metric_name: sum by (container_label_io_kubernetes_pod_namespace) (container_blkio_device_usage_total{service="cadvisor", container_label_io_kubernetes_pod_namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(container_blkio_device_usage_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 150s
         right_window: 150s
         step: 30
