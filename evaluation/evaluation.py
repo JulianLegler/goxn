@@ -26,6 +26,7 @@ from imblearn.over_sampling import SMOTE
 
 import numpy as np
 import pandas as pd
+import cloudpickle as pickle
 import yaml
 import seaborn as sns
 import matplotlib.gridspec as gridspec
@@ -755,18 +756,101 @@ class Report:
 
     def __str__(self):
         return f"{self.__class__.__name__}(file={self.experiment_name}, created={self.created})"
+    
+    def _runs_summary_df(self) -> pd.DataFrame:
+        rows = []
+        for run in self.runs:
+            rows.append({
+                "run_key": run.id,
+                "loadgen_start_time": run.loadgen_start_time,
+                "loadgen_end_time":   run.loadgen_end_time,
+                "total_requests":     run.loadgen_total_requests,
+                "total_failures":     run.loadgen_total_failures,
+            })
+        return pd.DataFrame(rows)
+    
+    def _interactions_summary_df(self) -> pd.DataFrame:
+        rows = []
+        for run in self.runs:
+            for interaction in run.interactions:
+                rows.append({
+                    "run_key":            run.id,
+                    "interaction_id":     interaction.id,
+                    "treatment_name":     interaction.treatment_name,
+                    "treatment_type":     interaction.treatment_type,
+                    "treatment_start":    interaction.treatment_start,
+                    "treatment_end":      interaction.treatment_end,
+                    "response_name":      interaction.response_name,
+                    "response_type":      interaction.response_type,
+                    "response_start":     interaction.response_start,
+                    "response_end":       interaction.response_end,
+                    "p_value":            interaction.p_value,
+                    "test_statistic":     interaction.test_statistic,
+                    "test_performed":     interaction.test_performed,
+                    "store_key":          interaction.store_key,
+                })
+        return pd.DataFrame(rows)
+    
+    def _response_data_df(self) -> pd.DataFrame:
+        """
+        Return a single DataFrame with every interaction's response_data,
+        tagged with run_key and interaction_id for disambiguation.
+        """
+        frames = []
+        for run in self.runs:
+            for interaction in run.interactions:
+                # skip if there's no response_data
+                if not hasattr(interaction, "response_data"):
+                    continue
+                df = interaction.response_data.copy()
+                # tag each row
+                df["run_key"]        = run.id
+                df["interaction_id"] = interaction.id
+                df["treatment_name"] = interaction.treatment_name
+                df["response_name"]  = interaction.response_name
+                frames.append(df)
+        if frames:
+            # ignore_index=False keeps original index if you want timestamps, etc.
+            return pd.concat(frames, ignore_index=True)
+        return pd.DataFrame()
+    
+    def save_cache(self, cache_path: str):
+        """Serialize this Report to a pickle file."""
+        with open(cache_path, "wb") as f:
+            pickle.dump(self, f)
+            
+            
+        # Below actions save the report data to CSV files
+        """ base, _ = os.path.splitext(cache_path)
+        self.loadgen_data.to_csv(f"{base}.loadgen.csv", index=False)
+        self._runs_summary_df().to_csv(f"{base}.runs.csv", index=False)
+        self._interactions_summary_df().to_csv(f"{base}.interactions.csv", index=False)
+        resp_df = self._response_data_df()
+        if not resp_df.empty:
+            resp_df.to_csv(f"{base}.response_data.csv", index=False) """
 
     @classmethod
     def from_file(cls, report_path):
-        """    base_dir = os.getcwd()
-        report_path = os.path.join(base_dir, report_path) """
-        try:
-            with open(report_path, "r") as report_file:
-                report_data = yaml.safe_load(report_file.read())
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Report not found: {report_path}")
+        cache_path = report_path + ".pkl"
+        # try loading the pickle if it’s up-to-date
+        if os.path.exists(cache_path) and \
+           os.path.getmtime(cache_path) >= os.path.getmtime(report_path):
+            with open(cache_path, "rb") as f:
+                return pickle.load(f)
+
+        # otherwise parse YAML
+        with open(report_path, "r", encoding="utf-8") as rf:
+            data = yaml.safe_load(rf)
         creation_time = datetime.datetime.fromtimestamp(os.path.getctime(report_path))
-        return cls(experiment_name=report_path, created=creation_time, data=report_data)
+        report = cls(experiment_name=report_path, created=creation_time, data=data)
+
+        # save both pickle and CSVs
+        try:
+            report.save_cache(cache_path)
+        except Exception:
+            pass
+
+        return report
 
 def valid_split_range(n):
     n = float(n)
