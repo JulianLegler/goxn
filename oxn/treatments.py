@@ -978,7 +978,7 @@ class KubernetesProbabilisticHeadSamplingTreatment(Treatment):
         return True
 
     def inject(self) -> None:
-        assert self.config.get("sampling_percentage")
+        assert isinstance(self.config.get("sampling_percentage"), (int, float))
         assert self.config.get("hash_seed")
         assert isinstance(self.orchestrator, KubernetesOrchestrator)
         
