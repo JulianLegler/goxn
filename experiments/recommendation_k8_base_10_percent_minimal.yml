@@ -13,22 +13,22 @@ experiment:
     - pods_kepler_joules_all_absolute:
         type: metric
         metric_name: sum by (container_name, container_namespace) (kepler_container_joules_total{container_namespace=~"system-under-evaluation"})
-        left_window: 150s
-        right_window: 150s
+        left_window: 420s
+        right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_all_absolute:
         type: metric
         metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
-        left_window: 150s
-        right_window: 150s
+        left_window: 420s
+        right_window: 120s
         step: 30
         target: oxn
     - cadvisor_storage_usage_all_absolute:
         type: metric
         metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_blkio_device_usage_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
-        left_window: 150s
-        right_window: 150s
+        left_window: 420s
+        right_window: 120s
         step: 30
         target: oxn
   treatments:
