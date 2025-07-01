@@ -25,14 +25,14 @@ experiment:
         limit: 10000
     - system_CPU:
         type: metric
-        metric_name: sum(rate(container_cpu_usage_seconds_total{namespace="system-under-evaluation"}[1m]))
+        metric_name: sum(rate(container_cpu_usage_seconds_total{service="kube-prometheus-kube-prome-kubelet", namespace="system-under-evaluation"}[1m]))
         left_window: 30s
         right_window: 30s
         step: 1
         target: oxn
     - recommendation_deployment_CPU:
         type: metric
-        metric_name: sum(rate(container_cpu_usage_seconds_total{namespace="system-under-evaluation", pod=~"recommendation.*"}[90s])) by (pod)
+        metric_name: sum(rate(container_cpu_usage_seconds_total{service="kube-prometheus-kube-prome-kubelet", namespace="system-under-evaluation", pod=~"recommendation.*"}[90s])) by (pod)
         left_window: 30s
         right_window: 30s
         step: 1

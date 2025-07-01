@@ -15,7 +15,7 @@ experiment:
         limit: 100000
     - system_CPU:
         type: metric
-        metric_name: sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_project="opentelemetry-demo"}[1m]))
+        metric_name: sum(rate(container_cpu_usage_seconds_total{service="kube-prometheus-kube-prome-kubelet", container_label_com_docker_compose_project="opentelemetry-demo"}[1m]))
         left_window: 240s 
         right_window: 240s
         step: 1
