@@ -202,119 +202,98 @@ experiment:
         target: oxn
     - cadvisor_network_bytes_transmitted:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_transmit_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{label_app_kubernetes_io_name="recommendation", namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"}[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{label_app_kubernetes_io_name="recommendation", namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_aboslute:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{label_app_kubernetes_io_name="recommendation", namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{label_app_kubernetes_io_name="recommendation", namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_all:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_transmit_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"}[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_received_all:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_receive_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_network_receive_bytes_total{service="kube-prometheus-kube-prome-kubelet"}[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_all_absolute:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_received_all_absolute:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_receive_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_receive_bytes_total{service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_combined_absolute:
         type: metric
-        metric_name: sum by (namespace)(container_network_transmit_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_transmitted_combined:
         type: metric
-        metric_name: sum by (namespace)(rate(container_network_transmit_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
-        left_window: 420s
-        right_window: 120s
-        step: 30
-        target: oxn
-    - cadvisor_network_bytes_transmitted_combined:
-        type: metric
-        metric_name: sum by (namespace)(rate(container_network_transmit_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
-        left_window: 420s
-        right_window: 120s
-        step: 30
-        target: oxn
-    - cadvisor_network_bytes_transmitted_combined:
-        type: metric
-        metric_name: sum by (namespace)(rate(container_network_transmit_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
-        left_window: 420s
-        right_window: 120s
-        step: 30
-        target: oxn
-    - cadvisor_network_bytes_transmitted_combined:
-        type: metric
-        metric_name: sum by (namespace)(rate(container_network_transmit_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(rate(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"}[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_received_combined_absolute:
         type: metric
-        metric_name: sum by (namespace)(container_network_receive_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(container_network_receive_bytes_total{service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_received_combined:
         type: metric
-        metric_name: sum by (namespace)(rate(container_network_receive_bytes_total[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(rate(container_network_receive_bytes_total{service="kube-prometheus-kube-prome-kubelet"}[90s])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_storage_usage_all:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_blkio_device_usage_total[3m])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(rate(container_blkio_device_usage_total{device="/dev/md2",service="kube-prometheus-kube-prome-kubelet"}[3m])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_storage_usage_combined:
         type: metric
-        metric_name: sum by (namespace)(rate(container_blkio_device_usage_total[3m])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(rate(container_blkio_device_usage_total{device="/dev/md2",service="kube-prometheus-kube-prome-kubelet"}[3m])* on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_storage_usage_all_absolute:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_blkio_device_usage_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_blkio_device_usage_total{device="/dev/md2",service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_storage_usage_combined_absolute:
         type: metric
-        metric_name: sum by (namespace)(container_blkio_device_usage_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (namespace)(container_blkio_device_usage_total{device="/dev/md2",service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30

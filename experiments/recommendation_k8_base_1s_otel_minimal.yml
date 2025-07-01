@@ -19,7 +19,7 @@ experiment:
         target: oxn
     - cadvisor_network_bytes_transmitted_all_absolute:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
