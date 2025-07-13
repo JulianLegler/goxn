@@ -362,24 +362,218 @@ experiment:
         step: 30
         target: oxn
   treatments:
-    - probabilistic_head_sampling_rate:
-        action: kube_probl
-        params: {
-          sampling_percentage: 0.0,
-          hash_seed: 22,
-          }
+    #- kill_recommendation_service:
+    #    action: kubernetes_kill
+    #    params: {
+    #      namespace: system-under-evaluation,
+    #      label_selector: app.kubernetes.io/component,
+    #      label: recommendation,
+    #      amount_to_kill: 1,
+    #    }
+    #- stop_loadgen_deployment:
+    #    action: scale_deployment
+    #    params: {
+    #      namespace: system-under-evaluation,
+    #      label_selector: app.kubernetes.io/component,
+    #      label: loadgenerator,
+    #      scale_to: 0,
+    #    }
+    #- add_security_context:
+    #    action: security_context_kubernetes
+    #    params: {
+    #      namespace: system-under-evaluation,
+    #      label_selector: app.kubernetes.io/component,
+    #      label: recommendation,
+    #      capabilities: { add: ["NET_ADMIN"] },
+    #    }
+    # - delay_treatment:
+    #     action: delay
+    #     params: {
+    #       namespace: system-under-evaluation,
+    #       label_selector: app.kubernetes.io/name,
+    #       label: recommendation,
+    #       #service_name: node-exporter,
+    #       delay_time: 45ms,
+    #       delay_jitter: 45ms,
+    #       duration: 10m,
+    #       interface: eth0,
+    #     }
+    # - probabilistic_head_sampling_rate:
+    #     action: kube_probl
+    #     params: {
+    #       sampling_percentage: 5.0,
+    #       hash_seed: 22,
+    #       }
+    #- package_lost_treatment:
+    #    action: kubernetes_loss
+    #    params: {
+    #      namespace: system-under-evaluation,
+    #      label_selector: app.kubernetes.io/name,
+    #      label: recommendation,
+    #      loss_percentage: 15.0,
+    #      duration: 10m,
+    #      interface: eth0,
+    #    }
+    # fraud-detection, valkey-cart, ad, cart, production-catalog, kafka, query, image-provider, shipping, opensearch, quote, flagd, elasticsearch, currency, payment, frontend, checkout, email, collector, accounting, frontend-proxy, recommendation
     - empty_treatment:
         action: empty
         params: {
           duration: 20m,
         }
-    - prometheus_scrape_interval:
-        action: kubernetes_prometheus_interval
+    - ensure_otel_metric_interval_fraud_detection:
+        action: kubernetes_otel_metrics_interval
         params: {
-          interval: 60s,
-          evaluation_interval: 30s,
-          scrape_timeout: 3s,
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: fraud-detection,
+          interval: 30s,
         }
+    - ensure_otel_metric_interval_valkey_cart:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: valkey-cart,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_ad:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: ad,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_cart:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: cart,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_product_catalog:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: product-catalog,
+          interval: 1s,
+        }
+    - ensure_otel_metric_interval_kafka:    
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: kafka,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_image_provider:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: image-provider,
+          interval: 30s,
+        }   
+    - ensure_otel_metric_interval_shipping:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: shipping,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_quote:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: quote,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_flagd:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: flagd,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_currency:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: currency,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_payment:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: payment,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_frontend: 
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: frontend,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_checkout:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: checkout,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_email:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: email,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_accounting:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: accounting,
+          interval: 30s,
+        }
+    - ensure_otel_metric_interval_frontend_proxy:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+            label_selector: app.kubernetes.io/component,
+            label: frontend-proxy,
+            interval: 30s,
+        }
+    - ensure_otel_metric_interval_recommendation:
+        action: kubernetes_otel_metrics_interval
+        params: {
+          namespace: system-under-evaluation,
+          label_selector: app.kubernetes.io/component,
+          label: recommendation,
+          interval: 30s,
+        }
+        
+        
+     #reloading the prometheus config is not as trivial as it seems to be
+    #- prometheus_scrape_interval:
+    #    action: kubernetes_prometheus_interval
+    #    params: {
+    #      interval: 5s,
+    #      evaluation_interval: 5s,
+    #      scrape_timeout: 3s,
+    #    }
   sue:
     compose: opentelemetry-demo/docker-compose.yml
     exclude: [loadgenerator]

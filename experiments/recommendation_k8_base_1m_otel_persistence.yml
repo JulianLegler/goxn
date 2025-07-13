@@ -230,14 +230,14 @@ experiment:
         target: oxn
     - cadvisor_network_bytes_transmitted_all_absolute:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (component, namespace, label_app_kubernetes_io_name) (label_replace(container_network_transmit_bytes_total{service="kube-prometheus-kube-prome-kubelet"}, "component", "$1","pod", "^(.*)-[a-z0-9]+-[a-z0-9]+$")* on(pod, namespace) group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
         target: oxn
     - cadvisor_network_bytes_received_all_absolute:
         type: metric
-        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_network_receive_bytes_total{service="kube-prometheus-kube-prome-kubelet"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        metric_name: sum by (component, namespace, label_app_kubernetes_io_name) (label_replace(container_network_receive_bytes_total{service="kube-prometheus-kube-prome-kubelet"}, "component", "$1","pod", "^(.*)-[a-z0-9]+-[a-z0-9]+$")* on(pod, namespace) group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
         left_window: 420s
         right_window: 120s
         step: 30
@@ -333,6 +333,34 @@ experiment:
         right_window: 30s
         step: 30
         target: oxn
+    - pods_kepler_joules_all_container_level:
+        type: metric
+        metric_name: sum by (label_app_kubernetes_io_name, namespace, container_name)(label_replace(label_replace(kepler_container_joules_total{container_namespace="system-under-evaluation"},"namespace","$1","container_namespace","(.*)"),"pod","$1","pod_name","(.*)")* on(pod, namespace) group_left(label_app_kubernetes_io_name)kube_pod_labels{label_app_kubernetes_io_name=~".+", namespace="system-under-evaluation"})
+        left_window: 420s
+        right_window: 120s
+        step: 30
+        target: oxn
+    - pods_kepler_joules_all_container_level_all_namespaces:
+        type: metric
+        metric_name: sum by (label_app_kubernetes_io_name, container_name, container_namespace)(label_replace(kepler_container_joules_total, "pod", "$1", "pod_name", "(.*)")* on(pod) group_left(label_app_kubernetes_io_name)kube_pod_labels{  label_app_kubernetes_io_name=~".+"})
+        left_window: 420s
+        right_window: 120s
+        step: 30
+        target: oxn
+    - prometheus_scrape_amount:
+        type: metric
+        metric_name: prometheus_tsdb_head_samples_appended_total
+        left_window: 420s
+        right_window: 120s
+        step: 30
+        target: sue
+    - cadvisor_storage_usage_writes_all_absolute:
+        type: metric
+        metric_name: sum by (label_app_kubernetes_io_name,namespace)(container_blkio_device_usage_total{device="/dev/md2",service="kube-prometheus-kube-prome-kubelet", operation="Write"} * on(pod, namespace)group_left(label_app_kubernetes_io_name) kube_pod_labels{namespace="system-under-evaluation"})
+        left_window: 420s
+        right_window: 120s
+        step: 30
+        target: oxn
   treatments:
     - empty_treatment:
         action: empty
@@ -346,6 +374,13 @@ experiment:
           label_selector: app.kubernetes.io/component,
           label: recommendation,
           interval: 60s,
+        }
+    - prometheus_scrape_interval:
+        action: kubernetes_prometheus_interval
+        params: {
+          interval: 60s,
+          evaluation_interval: 30s,
+          scrape_timeout: 3s,
         }
   sue:
     compose: opentelemetry-demo/docker-compose.yml
