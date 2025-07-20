@@ -1,0 +1,3 @@
+PV_NAME,PVC,PATH,USAGE_BYTES
+pvc-414b9a3b-fb2c-4230-9984-6370ada311a7,system-under-evaluation/prometheus,/var/openebs/local/pvc-414b9a3b-fb2c-4230-9984-6370ada311a7,680234975
+pvc-98abd72d-5ecf-4f33-83c3-9925acfe0a5a,system-under-evaluation/elasticsearch-pvc,/var/openebs/local/pvc-98abd72d-5ecf-4f33-83c3-9925acfe0a5a,190082642
