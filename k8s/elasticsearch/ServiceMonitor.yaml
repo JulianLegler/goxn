@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: elasticsearch-exporter
+  namespace: system-under-evaluation
+  labels:
+    release: kube-prometheus
+    app.kubernetes.io/instance: kube-prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 62.5.1
+    chart: kube-prometheus-stack-62.5.1
+    heritage: Helm
+spec:
+  selector:
+    matchLabels:
+      app: elasticsearch-exporter
+  namespaceSelector:
+    matchNames:
+      - system-under-evaluation
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
