@@ -1,0 +1,37 @@
+global:
+  proxy:
+    autoInject: enabled
+values:
+  pilot:
+    resources:
+      requests:
+        cpu: 100m
+meshConfig:
+  enablePrometheusMerge: true
+  enableTracing: true
+  defaultConfig: 
+    tracing:
+      sampling: 1
+      zipkin:
+        address: "otel-collector.system-under-evaluation.svc.cluster.local:9411" # "otel-collector.system-under-evaluation.svc.cluster.local:9411"
+  extensionProviders:
+    - name: otel-collector
+      envoyGrpc:
+        clusterName: otel-collector
+        timeout: 10s
+    - name: otlp-grpc
+      envoyGrpc:
+        clusterName: otlp-grpc
+        timeout: 10s
+    - name: otlp-http
+      envoyHttp:
+        clusterName: otlp-http
+        timeout: 10s
+    - name: otel-tracing
+      opentelemetry:
+        port: 9411
+        service: otel-collector.system-under-evaluation.svc.cluster.local
+  defaultProviders:
+    accessLogging:
+    - envoy
+    - otel

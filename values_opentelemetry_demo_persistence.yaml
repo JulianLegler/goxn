@@ -1,11 +1,20 @@
 jaeger:
   allInOne:
     enabled: false
+  agent:
+    enabled: false
+  ingester:
+    enabled: false
   provisionDataStore:
     cassandra: false
-    elasticsearch: true
+    elasticsearch: false
   storage:
     type: elasticsearch
+    elasticsearch:
+      host: elasticsearch.system-under-evaluation.svc.cluster.local
+      port: 9200
+      scheme: http
+      indexPrefix: jaeger
   collector:
     enabled: true
     service:
@@ -13,35 +22,20 @@ jaeger:
         port: 14250
       http:
         port: 14268
-
-      # --- NEW: OTLP receiver ports ---
       otlp:
-        grpc:               # ← presence of this map enables everything
-          name: otlp-grpc   # servicePort name (default is fine)
-          port: 4317        # exposed on the Service and in the Pod
+        grpc:
+          name: otlp-grpc
+          port: 4317
         http:
           name: otlp-http
-          port: 4318        
+          port: 4318
   query:
     enabled: true
     service:
-      type: ClusterIP       # change to NodePort / LoadBalancer / etc. if you prefer
-      port: 16686           # servicePort
-      targetPort: query     # matches the containerPort named "query"
-      # nodePort: 31686     # only if type == NodePort and you want a fixed port
+      type: ClusterIP
+      port: 16686
+      targetPort: query
 
-    
-  elasticsearch:
-    master:
-      persistence:
-        enabled: true
-        storageClass: openebs-hostpath  
-        size: 10Gi
-    data:
-      persistence:
-        enabled: true
-        storageClass: openebs-hostpath   
-        size: 20Gi
 components:
   flagd:
     resources:
@@ -92,7 +86,7 @@ prometheus:
       storageClass: "openebs-hostpath"
       accessModes:
         - ReadWriteOnce
-      size: 16Gi
+      size: 50Gi
     resources:
       limits:
         memory: 6Gi
