@@ -22,7 +22,7 @@
                 "GEVENT_SUPPORT": "True"
             },
             "args": [
-                "experiments/recommendation_k8_base_1m_otel.yml",
+                "experiments/debug.yml",
                 "--report", "reports/"
             ],
             "console": "integratedTerminal",
