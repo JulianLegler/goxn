@@ -41,15 +41,15 @@ experiment:
     - empty_treatment:
         action: empty
         params: {
-          duration: 20m,
+          duration: 60m,
         }
   sue:
     compose: opentelemetry-demo/docker-compose.yml
     exclude: [loadgenerator]
     required: [{namespace: system-under-evaluation, name: prometheus}] 
   loadgen:
-    run_time: 30m
-    max_users: 1000
+    run_time: 70m
+    max_users: 500
     spawn_rate: 50
     locust_files: [
       { path: locust/locust_basic_interaction.py },

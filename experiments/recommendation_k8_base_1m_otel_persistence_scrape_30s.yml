@@ -1,4 +1,3 @@
-# inject a packet delay of 0-90ms while increasing the otel metric inverval to 1s
 experiment:
   version: 0.0.1
   orchestrator: kubernetes
@@ -174,7 +173,7 @@ experiment:
         target: sue
     - sampling_rates:
         type: metric
-        metric_name: increase(otelcol_processor_probabilistic_sampler_count_traces_sampled[1m])
+        metric_name: increase(otelcol_processor_probabilistic_sampler_count_traces_sampled[90s])
         left_window: 420s
         right_window: 120s
         step: 30
@@ -365,7 +364,7 @@ experiment:
     - empty_treatment:
         action: empty
         params: {
-          duration: 20m,
+          duration: 60m,
         }
     - ensure_otel_metric_interval:
         action: kubernetes_otel_metrics_interval
@@ -378,9 +377,9 @@ experiment:
     - prometheus_scrape_interval:
         action: kubernetes_prometheus_interval
         params: {
-          interval: 60s,
+          interval: 30s,
           evaluation_interval: 30s,
-          scrape_timeout: 3s,
+          scrape_timeout: 10s,
         }
   sue:
     compose: opentelemetry-demo/docker-compose.yml
@@ -388,8 +387,8 @@ experiment:
     required: [{namespace: system-under-evaluation, name: prometheus}] # {namespace: monitoring, name: not-running-service}
     #required: [{namespace: monitoring, name: grafana}, {namespace: monitoring, name: node-exporter}]
   loadgen:
-    run_time: 30m
-    max_users: 1000
+    run_time: 70m
+    max_users: 500
     spawn_rate: 50
     locust_files: [
       { path: locust/locust_basic_interaction.py },

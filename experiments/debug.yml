@@ -1,4 +1,3 @@
-# inject a packet delay of 0-90ms while increasing the otel metric inverval to 1s
 experiment:
   version: 0.0.1
   orchestrator: kubernetes
@@ -358,7 +357,7 @@ experiment:
     #required: [{namespace: monitoring, name: grafana}, {namespace: monitoring, name: node-exporter}]
   loadgen:
     run_time: 5m
-    max_users: 1000
+    max_users: 500
     spawn_rate: 50
     locust_files: [
       { path: locust/locust_basic_interaction.py },

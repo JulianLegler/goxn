@@ -35,7 +35,7 @@ experiment:
     - empty_treatment:
         action: empty
         params: {
-          duration: 20m,
+          duration: 60m,
         }
     - ensure_otel_metric_interval:
         action: kubernetes_otel_metrics_interval
@@ -50,8 +50,8 @@ experiment:
     exclude: [loadgenerator]
     required: [{namespace: system-under-evaluation, name: prometheus}]
   loadgen:
-    run_time: 30m
-    max_users: 1000
+    run_time: 70m
+    max_users: 500
     spawn_rate: 50
     locust_files: [
       { path: locust/locust_basic_interaction.py },
