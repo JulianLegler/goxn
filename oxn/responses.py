@@ -96,6 +96,12 @@ class MetricResponseVariable(ResponseVariable):
         Label a Prometheus dataframe. Note that Prometheus returns timestamps in seconds as a float
 
         """
+
+        if self.data is None:
+            raise PrometheusException(
+                message="Cannot label dataframe",
+                explanation="Dataframe is empty for response variable: " + self.name,
+            )
         
         predicate = self.data["timestamp"].between(treatment_start, treatment_end)
         

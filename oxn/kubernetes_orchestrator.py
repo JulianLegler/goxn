@@ -551,7 +551,7 @@ class KubernetesOrchestrator(Orchestrator):
         assert deployment.status is not None
         return deployment.status.ready_replicas == deployment.status.replicas and deployment.status.replicas > 0
     
-    def set_prometheus_scrape_values(self, scrape_interval, evaluation_interval, scrape_timeout):
+    def set_prometheus_scrape_values(self, scrape_interval, evaluation_interval, scrape_timeout, configmap_name="prometheus") -> None:
         """
         Set the Prometheus scrape values
 
@@ -564,10 +564,10 @@ class KubernetesOrchestrator(Orchestrator):
         
         # TODO: make this more generic
         try:
-            configmap = self.kube_client.read_namespaced_config_map(name="astronomy-shop-prometheus-server", namespace="system-under-evaluation")
+            configmap = self.kube_client.read_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation")
         except ApiException as e:
             raise OrchestratorException(
-                message=f"Error while reading ConfigMap astronomy-shop-prometheus-server in namespace system-under-evaluation: {e.body}",
+                message=f"Error while reading ConfigMap {configmap_name} in namespace system-under-evaluation: {e.body}",
                 explanation=str(e),
             )
             
@@ -598,16 +598,16 @@ class KubernetesOrchestrator(Orchestrator):
         configmap.data['prometheus.yml'] = updated_prometheus_config_yaml
         
         try:
-            self.kube_client.patch_namespaced_config_map(name="astronomy-shop-prometheus-server", namespace="system-under-evaluation", body=configmap)
-            logging.info(f"ConfigMap astronomy-shop-prometheus-server updated successfully.")
+            self.kube_client.patch_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation", body=configmap)
+            logging.info(f"ConfigMap {configmap_name} updated successfully.")
         except ApiException as e:
             raise OrchestratorException(
-                message=f"Error while updating ConfigMap astronomy-shop-prometheus-server in namespace system-under-evaluation: {e.body}",
+                message=f"Error while updating ConfigMap {configmap_name} in namespace system-under-evaluation: {e.body}",
                 explanation=str(e),
             )
                 
                 
-    def get_prometheus_scrape_values(self) -> Tuple[str, str, str]:
+    def get_prometheus_scrape_values(self, configmap_name="prometheus") -> Tuple[str, str, str]:
         """
         Get the Prometheus scrape values
 
@@ -617,10 +617,10 @@ class KubernetesOrchestrator(Orchestrator):
         """
         
         try:
-            configmap = self.kube_client.read_namespaced_config_map(name="astronomy-shop-prometheus-server", namespace="system-under-evaluation")
+            configmap = self.kube_client.read_namespaced_config_map(name=configmap_name, namespace="system-under-evaluation")
         except ApiException as e:
             raise OrchestratorException(
-                message=f"Error while reading ConfigMap astronomy-shop-prometheus-server in namespace system-under-evaluation: {e.body}",
+                message=f"Error while reading ConfigMap {configmap_name} in namespace system-under-evaluation: {e.body}",
                 explanation=str(e),
             )
             
