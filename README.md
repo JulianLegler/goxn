@@ -99,6 +99,7 @@ The cluster provides Persistent Volume Claims (PVCs) to store data over multiple
 
 ```bash
 kubectl apply -f https://openebs.github.io/charts/openebs-operator.yaml
+kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```
 
 > You can also use other implementations of PVCs. Just make sure to change the values in the helm configs accordingly.
