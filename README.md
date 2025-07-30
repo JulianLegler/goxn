@@ -1,9 +1,10 @@
 ## Introduction
-OXN - **O**bservability e**X**periment e**N**gine - 
-is an extensible software framework to run observability experiments and compare observability design decisions.
-OXN follows the design principles of cloud benchmarking and strives towards portable and repeatable experiments.
+GOXN - **G**reen **O**bservability e**X**periment e**N**gine - 
+is an extensible software framework to run green observability experiments and compare design decisions.
+GOXN follows the design principles of cloud benchmarking and strives towards portable and repeatable experiments.
 Experiments are defined as yaml-based configuration files, which allows them to be shared, versioned and repeated.
-OXN automates every step of the experiment process in a straightforward manner, from SUE setup to data collection, processing and reporting. 
+GOXN automates every step of the experiment process in a straightforward manner, from SUE setup to data collection, processing and reporting. 
+GOXN is a fork of [OXN](https://github.com/nymphbox/oxn).
 
 
 ## Installation
