@@ -147,7 +147,6 @@ helm install astronomy-shop open-telemetry/opentelemetry-demo \
     -f values_opentelemetry_demo.yaml
 ```
 
-
-
-
+## Data Post-Processing
+To create human readable insights, use the `data_processing.ipynb` located in `evaluation/`. This Jupyter Notebook creates easilier to understand CSV files. For even further processing, have a look at the steps described in the [GOXN Replication Package](https://github.com/JulianLegler/goxn-replication-package).
 
