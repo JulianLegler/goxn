@@ -17,7 +17,7 @@ GOXN is a fork of [OXN](https://github.com/nymphbox/oxn).
 
 ### Running in kubernetes
 #### Cluster Requirements
-The cluster provides Persistent Volume Claims (PVCs) to store data over multiple pod restarts. For this, the cluster makes use of OpenEBS in the default given config of OXN. Install OpenEBS with the following command:
+The cluster provides Persistent Volume Claims (PVCs) to store data over multiple pod restarts. For this, the cluster makes use of OpenEBS in the default given config of GOXN. Install OpenEBS with the following command:
 
 ```bash
 kubectl apply -f https://openebs.github.io/charts/openebs-operator.yaml
@@ -26,9 +26,9 @@ kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"st
 
 > You can also use other implementations of PVCs. Just make sure to change the values in the helm configs accordingly.
 
-### Install oxn via pip
+### Installgoxn via pip
 
-> Note: oxn requires Python >= 3.10
+> Note:goxn requires Python >= 3.10
 
 1. Install virtualenv
 
@@ -42,15 +42,15 @@ kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"st
 
     ```source venv/bin/activate```
 
-4. Install oxn
+4. Installgoxn
 
     ```pip install . ```
 
-> Note: oxn requires the pytables package, which in turn requires a set of dependencies.
+> Note:goxn requires the pytables package, which in turn requires a set of dependencies.
 
 
 ### Run an example observability experiment
-1. Verify that oxn is correctly installed 
+1. Verify thatgoxn is correctly installed 
 
 ```
 oxn --help
@@ -59,15 +59,15 @@ usage: oxn [-h] [--times TIMES] [--report REPORT] [--accounting] [--randomize] [
 Observability experiments engine
 
 positional arguments:
-  spec                  Path to an oxn experiment specification to execute.
+  spec                  Path to angoxn experiment specification to execute.
 
 options:
   -h, --help            show this help message and exit
   --times TIMES         Run the experiment n times. Default is 1
   --report REPORT       Create an experiment report at the specified location. If the file exists, it will be overwritten. If it does not exist, it will be created.
-  --accounting          Capture resource usage for oxn and the sue. Requires that the report option is set.Will increase the time it takes to run the experiment by about two seconds for each service in the sue.
+  --accounting          Capture resource usage forgoxn and the sue. Requires that the report option is set.Will increase the time it takes to run the experiment by about two seconds for each service in the sue.
   --randomize           Randomize the treatment execution order. Per default, treatments are executed in the order given in the experiment specification
-  --extend EXTEND       Path to a treatment extension file. If specified, treatments in the file will be loaded into oxn.
+  --extend EXTEND       Path to a treatment extension file. If specified, treatments in the file will be loaded intogoxn.
   --loglevel [{debug,info,warning,error,critical}]
                         Set the log level. Choose between debug, info, warning, error, critical. Default is info
   --logfile LOG_FILE    Write logs to a file. If the file does not exist, it will be created.
@@ -88,7 +88,7 @@ oxn experiments/recommendation_pause_baseline.yml --report baseline_report.yml
 sh run_experiment_suite.sh
 ```
 
-This should automatically setup the needed helm charts and start the experiments. Make sure that OXN and its requirements are installed before.
+This should automatically setup the needed helm charts and start the experiments. Make sure thatgoxn and its requirements are installed before.
 
 
 ### Manual Execution and Deploxment
@@ -122,7 +122,7 @@ helm install kepler kepler/kepler \
     -f values_kepler.yaml 
 ```
 
-There is a preconfigured dashboard for Grafana. The dashboard is deployed from the OXN repository using the command:
+There is a preconfigured dashboard for Grafana. The dashboard is deployed from the GOXN repository using the command:
 ```bash
 GF_POD=$(
     kubectl get pod \
