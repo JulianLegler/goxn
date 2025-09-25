@@ -1,43 +1,32 @@
 ## Introduction
-OXN - **O**bservability e**X**periment e**N**gine - 
-is an extensible software framework to run observability experiments and compare observability design decisions.
-OXN follows the design principles of cloud benchmarking and strives towards portable and repeatable experiments.
+GOXN - **G**reen **O**bservability e**X**periment e**N**gine - 
+is an extensible software framework to run green observability experiments and compare design decisions.
+GOXN follows the design principles of cloud benchmarking and strives towards portable and repeatable experiments.
 Experiments are defined as yaml-based configuration files, which allows them to be shared, versioned and repeated.
-OXN automates every step of the experiment process in a straightforward manner, from SUE setup to data collection, processing and reporting. 
+GOXN automates every step of the experiment process in a straightforward manner, from SUE setup to data collection, processing and reporting. 
+GOXN is a fork of [OXN](https://github.com/nymphbox/oxn).
 
 
 ## Installation
 
 ##### Prerequisites
-- Docker + Docker Compose
+- Kubectl + Kubernetes Cluster
 - Python >= v3.10
 - Jupyter
 
 
-###### Setup the OpenTelemetry demo application
-1.  Change to the forked demo submodule folder
+### Running in kubernetes
+#### Cluster Requirements
+The cluster provides Persistent Volume Claims (PVCs) to store data over multiple pod restarts. For this, the cluster makes use of OpenEBS in the default given config of OXN. Install OpenEBS with the following command:
 
-    ```cd opentelemetry-demo/```
+```bash
+kubectl apply -f https://openebs.github.io/charts/openebs-operator.yaml
+kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```
 
-2. Build needed containers. This will take a while a while
+> You can also use other implementations of PVCs. Just make sure to change the values in the helm configs accordingly.
 
-    ``` make build ```
-
-    Alternativly, you can just build the container with fault injection, e.g., the recommender service. This may cause incompatability in the future. 
-
-    ``` docker compose build recommendationservice ```
-
-3. Run docker compose to start the demo
-
-    ```docker compose up```
-
-3. Verify the demo application is working by visiting
-
-* ```http:localhost:8080/``` for the Webstore
-* ```http:localhost:8080/jaeger/ui``` for Jaeger
-* ```http:localhost:9090``` for Prometheus
-
-##### Install oxn via pip
+### Install oxn via pip
 
 > Note: oxn requires Python >= 3.10
 
@@ -60,7 +49,7 @@ OXN automates every step of the experiment process in a straightforward manner, 
 > Note: oxn requires the pytables package, which in turn requires a set of dependencies.
 
 
-##### Run an example observability experiment
+### Run an example observability experiment
 1. Verify that oxn is correctly installed 
 
 ```
@@ -93,16 +82,17 @@ oxn experiments/recommendation_pause_baseline.yml --report baseline_report.yml
 
 ```
 
-### Running in kubernetes
-#### Cluster Requirements
-The cluster provides Persistent Volume Claims (PVCs) to store data over multiple pod restarts. For this, the cluster makes use of OpenEBS in the default given config of OXN. Install OpenEBS with the following command:
+### Quick Start: Experiment Suite
 
-```bash
-kubectl apply -f https://openebs.github.io/charts/openebs-operator.yaml
-kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```shell
+sh run_experiment_suite.sh
 ```
 
-> You can also use other implementations of PVCs. Just make sure to change the values in the helm configs accordingly.
+This should automatically setup the needed helm charts and start the experiments. Make sure that OXN and its requirements are installed before.
+
+
+### Manual Execution and Deploxment
+If you dont want to use the `run_experiment_suite.sh` script, you have to deploy the individual components using helm charts.
 
 #### External Observability Stack
 For the Prometheus and Grafana, we use the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) which deploys and configures Prometheus and Grafana in a ready to use state.
@@ -156,4 +146,8 @@ helm install astronomy-shop open-telemetry/opentelemetry-demo \
     --version 0.36.4 \
     -f values_opentelemetry_demo.yaml
 ```
+
+
+
+
 
