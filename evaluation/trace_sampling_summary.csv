@@ -1,7 +1,0 @@
-report,label,sampled_traces_total,data_points,avg_sampled_per_min
-report_2025-07-17_04-15-12.yaml,50% Persistence,8385562.5,60,139759.375
-report_2025-07-17_03-00-32.yaml,10% Persistence,1686447.0,60,28107.45
-report_2025-07-17_01-45-27.yaml,5% Persistence,841383.0,60,14023.05
-report_2025-07-17_00-30-49.yaml,Scrape 30s Persistence,333039.0,120,2775.325
-report_2025-07-16_23-16-11.yaml,Scrape 5s Persistence,331528.1342859179,120,2762.734452382649
-report_2025-07-16_22-01-34.yaml,Base Persistence,168397.51140616334,60,2806.625190102722
